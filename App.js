@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import styles from './Style';
 
@@ -9,21 +9,26 @@ const BTN_STOP = 'Stop';
 const COUNT_DEFAULT = '00:00.00';
 
 export default () => {
-  const [milliseconds, setMilliseconds] = useState(0);
-  const [btn, setBtn] = useState(BTN_START);
-  const [count, setCount] = useState(COUNT_DEFAULT);
-  const [isRunning, setIsRunning] = useState(false);
-
-  useEffect(() => {
+  /* Variables */
+  const [milliseconds, setMilliseconds] = React.useState(0);
+  const [btn, setBtn] = React.useState(BTN_START);
+  const [count, setCount] = React.useState(COUNT_DEFAULT);
+  const [isRunning, setIsRunning] = React.useState(false);
+  
+  React.useEffect(() => {
     if (isRunning) {
       const id = setInterval(() => {
-        setMilliseconds((milliseconds) => milliseconds += 1);        
-        function format(number) { return (number < 10 ? '0' : '') + number; }
-        setCount(`${format(Math.floor(((milliseconds / (10 * 60)) % 60)))}:${format(Math.floor((milliseconds / 10) % 60))}.${format(milliseconds % 10)}`);
+        setMilliseconds((milliseconds) => (milliseconds += 1));
+        let ms = milliseconds % 100;
+        let s = Math.floor((milliseconds / 100) % 60);
+        let m = Math.floor((milliseconds / (100 * 60)) % 60);
+        function format(number) {
+          return (number < 10 ? '0' : '') + number;
+        }
+        setCount(`${format(m)}:${format(s)}.${format(ms)}`);
       }, 10);
       return () => clearInterval(id);
     }
-
     return undefined;
   }, [isRunning, milliseconds]);
 
